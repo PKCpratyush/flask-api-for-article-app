@@ -1,11 +1,9 @@
-from flask import Flask, Blueprint
+from flask import Flask
 import os
 from .models import db
 from .serializer import ma
 from .views import app, api
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-from flask_restful import Api
+from .celery_task import app_cel
 
 # db = SQLAlchemy()
 # ma = Marshmallow()
@@ -22,8 +20,17 @@ def create_app():
     ma.init_app(app1)
     api.init_app(app1)
     app1.register_blueprint(app)
+    app1.register_blueprint(app_cel)
     
     return app1
+
+# for creating celery object
+# def create_celery():
+#     app = create_app()
+#     celery = make_celery(app)
+#     return celery
+
+# celery = create_celery()
 
 
 

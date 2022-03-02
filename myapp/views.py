@@ -1,9 +1,11 @@
+from time import sleep
 from flask import Blueprint
 from flask import jsonify, request, make_response
 import jwt
 import os
 from functools import wraps
 import datetime
+from .celery_funcs import testing_f
 from .models import db, User, Articles, Science, Sports, Entertainment, Politics
 from .serializer import ArticleSerializer, TagSerializer
 
@@ -65,8 +67,10 @@ def send_mail(email, msg):
         print(e)
 
 
+
 @app.route("/", methods=["GET"])
 def home():
+
     return {
         "Here is what you can do with this api": "You can have /user/, /otp/, /article/ and /tag/ urls with various methods enjoy !"
     }
@@ -321,9 +325,16 @@ class TagBasedView(Resource):
                 return jsonify(json_data_to_return)
         return {"msg": "No such tag found"}
 
+# @app.route("/celery")
+class CeleryTry(Resource):
+    def get(self):
+        x = testing_f()
+        print(type(x),x)
+        return "hello"
 
 ################### ROUTES ########################################################################################################################
 
+api.add_resource(CeleryTry, "/celery/")
 api.add_resource(OTPVerification, "/otp/")
 api.add_resource(UserVerificationAndLogin, "/user/")
 api.add_resource(ArticleCRUD, "/article/")
